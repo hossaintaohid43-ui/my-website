@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশের সব উৎসবের শুভেচ্ছা</title>
+    <style>
+        body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background: #0b0e14; font-family: 'Poppins', sans-serif; color: white; overflow: hidden; }
+        .glass-card { 
+            position: relative; z-index: 10; background: rgba(255, 255, 255, 0.05); 
+            backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); 
+            text-align: center; max-width: 480px; width: 92%; 
+        }
+        .time-box { background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 12px; min-width: 65px; border: 1px solid #00d4ff; display: inline-block; margin: 4px; }
+        .time-box span { font-size: 1.4rem; font-weight: bold; color: #00d4ff; }
+        
+        select, input { padding: 14px; border-radius: 30px; border: 1px solid #444; width: 90%; font-size: 1rem; margin-bottom: 12px; outline: none; background: #fff; color: #333; }
+        button { padding: 14px 30px; border-radius: 30px; border: none; background: linear-gradient(45deg, #00d4ff, #0055ff); color: white; font-weight: bold; cursor: pointer; transition: 0.3s; width: 95%; font-size: 1.1rem; }
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4); }
+        .share-btn { display: none; margin-top: 20px; background: #25d366; }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card">
+        <h3 id="topMsg">উৎসবের দিন গুনুন...</h3>
+        
+        <div id="timerContainer">
+            <div class="time-box"><span id="days">00</span><br><small>দিন</small></div>
+            <div class="time-box"><span id="hours">00</span><br><small>ঘণ্টা</small></div>
+            <div class="time-box"><span id="minutes">00</span><br><small>মিনিট</small></div>
+            <div class="time-box"><span id="seconds">00</span><br><small>সেকেন্ড</small></div>
+        </div>
+
+        <h1 id="mainTitle" style="font-size: 1.8rem; margin: 20px 0;">শুভেচ্ছা কার্ড তৈরি করুন 🎁</h1>
+
+        <div id="inputSection">
+            <label style="display:block; margin-bottom:5px; font-size:0.9rem; color:#aaa;">উৎসব বেছে নিন:</label>
+            <select id="eventSelect" onchange="updateTarget()">
+                <option value="2026-03-26">স্বাধীনতা দিবস (২৬ মার্চ)</option>
+                <option value="2026-03-31">পবিত্র ঈদুল ফিতর</option>
+                <option value="2026-04-14">পহেলা বৈশাখ</option>
+                <option value="2026-05-01">মে দিবস</option>
+                <option value="2026-06-06">পবিত্র ঈদুল আযহা</option>
+                <option value="2026-10-20">শারদীয় দুর্গাপূজা</option>
+                <option value="2026-12-16">বিজয় দিবস (১৬ ডিসেম্বর)</option>
+                <option value="2026-12-25">বড় দিন (Christmas)</option>
+                <option value="2027-01-01">হ্যাপি নিউ ইয়ার ২০২৭</option>
+            </select>
+            <input type="text" id="nameInput" placeholder="আপনার নাম লিখুন">
+            <button onclick="startCelebration()">ম্যাজিক কার্ড তৈরি করুন ✨</button>
+        </div>
+
+        <h2 id="showName" style="color:#00d4ff; margin-top:20px;"></h2>
+        <button id="finalShare" class="share-btn" onclick="shareIt()">বন্ধুদের সব অ্যাপে শেয়ার করুন 🚀</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        let targetDate;
+        
+        function updateTarget() {
+            const selectedVal = document.getElementById("eventSelect").value;
+            targetDate = new Date(selectedVal + " 00:00:00").getTime();
+            const selectedText = document.getElementById("eventSelect").options[document.getElementById("eventSelect").selectedIndex].text;
+            document.getElementById("topMsg").innerText = selectedText + " আসতে বাকি...";
+        }
+
+        // শুরুতে প্রথম অপশন লোড করা
+        updateTarget();
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const gap = targetDate - now;
+            if (gap < 0) {
+                document.getElementById("timerContainer").innerHTML = "<h3 style='color:#ffcc00'>উৎসবের দিন আজই! 🎉</h3>";
+                return;
+            }
+            document.getElementById("days").innerText = Math.floor(gap / (1000 * 60 * 60 * 24));
+            document.getElementById("hours").innerText = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById("minutes").innerText = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById("seconds").innerText = Math.floor((gap % (1000 * 60)) / 1000);
+        }, 1000);
+
+        function startCelebration() {
+            const name = document.getElementById("nameInput").value;
+            const eventName = document.getElementById("eventSelect").options[document.getElementById("eventSelect").selectedIndex].text;
+            
+            if(name) {
+                document.getElementById("mainTitle").innerText = "শুভ " + eventName + "!";
+                document.getElementById("showName").innerText = "✨ " + name + " এর পক্ষ থেকে শুভেচ্ছা ✨";
+                document.getElementById("inputSection").style.display = "none";
+                document.getElementById("finalShare").style.display = "block";
+                
+                // কনফেটি অ্যানিমেশন
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            } else {
+                alert("দয়া করে নাম লিখুন!");
+            }
+        }
+
+        async function shareIt() {
+            const name = document.getElementById("nameInput").value;
+            const eventName = document.getElementById("eventSelect").options[document.getElementById("eventSelect").selectedIndex].text;
+            const shareData = {
+                title: 'উৎসবের শুভেচ্ছা',
+                text: 'দেখুন ' + name + ' আপনাকে ' + eventName + '-এর কি দারুণ শুভেচ্ছা পাঠিয়েছে! 😍',
+                url: window.location.href
+            };
+            if (navigator.share) { await navigator.share(shareData); } 
+            else { alert("লিঙ্কটি কপি করুন: " + window.location.href); }
+        }
+    </script>
+</body>
+</html>
